@@ -49,7 +49,7 @@ private:
     vector<int> gridFrequencies = { 50, 100, 200, 500, 1000, 2000, 5000, 10000 };
     static constexpr float lineWidth = 2.0f;
 
-    int sampleRate = 0;
+    double sampleRate = 0;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectrumAnalyser)
 };

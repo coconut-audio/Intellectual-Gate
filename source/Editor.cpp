@@ -1,13 +1,13 @@
 #include "Editor.h"
 #include "common/Colours.h"
 
-Editor::Editor(Processor& processorRef)
-    : AudioProcessorEditor(&processorRef)
-    , processor(processorRef)
-    , forwardFFT(processor.fftOrder)
-    , window(1 << processor.fftOrder, dsp::WindowingFunction<float>::hann)
-    , levelMeter(processor)
-    , spectrumAnalyser(processor)
+Editor::Editor(Processor& proc)
+    : AudioProcessorEditor(&proc)
+    , processorRef(proc)
+    , forwardFFT(processorRef.fftOrder)
+    , window(1 << processorRef.fftOrder, dsp::WindowingFunction<float>::hann)
+    , levelMeter(processorRef)
+    , spectrumAnalyser(processorRef)
     , constrainer(std::make_unique<ComponentBoundsConstrainer>())
 {
     setSize(800, 420);
@@ -44,28 +44,28 @@ void Editor::resized()
 
 void Editor::timerCallback()
 {
-    float dryRmsLevel = jlimit(LevelMeter::minDecibels, LevelMeter::maxDecibels, processor.getRmsValue(true));
-    float wetRmsLevel = jlimit(LevelMeter::minDecibels, LevelMeter::maxDecibels, processor.getRmsValue(false));
+    float dryRmsLevel = jlimit(LevelMeter::minDecibels, LevelMeter::maxDecibels, processorRef.getRmsValue(true));
+    float wetRmsLevel = jlimit(LevelMeter::minDecibels, LevelMeter::maxDecibels, processorRef.getRmsValue(false));
     levelMeter.fillRmsValues(dryRmsLevel, wetRmsLevel);
 
-    if (processor.isDryFftBlockReady())
+    if (processorRef.isDryFftBlockReady())
     {
-        window.multiplyWithWindowingTable(const_cast<float*>(processor.getDryFftData()), processor.fftSize);
-        forwardFFT.performFrequencyOnlyForwardTransform(const_cast<float*>(processor.getDryFftData()));
+        window.multiplyWithWindowingTable(const_cast<float*>(processorRef.getDryFftData()), processorRef.fftSize);
+        forwardFFT.performFrequencyOnlyForwardTransform(const_cast<float*>(processorRef.getDryFftData()));
     }
 
-    if (processor.isWetFftBlockReady())
+    if (processorRef.isWetFftBlockReady())
     {
-        window.multiplyWithWindowingTable(const_cast<float*>(processor.getWetFftData()), processor.fftSize);
-        forwardFFT.performFrequencyOnlyForwardTransform(const_cast<float*>(processor.getWetFftData()));
+        window.multiplyWithWindowingTable(const_cast<float*>(processorRef.getWetFftData()), processorRef.fftSize);
+        forwardFFT.performFrequencyOnlyForwardTransform(const_cast<float*>(processorRef.getWetFftData()));
     }
 
-    dryInterpolator.process(static_cast<float>(processor.fftSize) / static_cast<float>(interpolatedSize), processor.getDryFftData(), dryInterpolatedData, interpolatedSize);
-    wetInterpolator.process(static_cast<float>(processor.fftSize) / static_cast<float>(interpolatedSize), processor.getWetFftData(), wetInterpolatedData, interpolatedSize);
+    dryInterpolator.process(static_cast<float>(processorRef.fftSize) / static_cast<float>(interpolatedSize), processorRef.getDryFftData(), dryInterpolatedData, interpolatedSize);
+    wetInterpolator.process(static_cast<float>(processorRef.fftSize) / static_cast<float>(interpolatedSize), processorRef.getWetFftData(), wetInterpolatedData, interpolatedSize);
 
     spectrumAnalyser.updateSpectra(dryInterpolatedData, wetInterpolatedData, static_cast<float>(interpolatedSize));
-    processor.clearDryFftReady();
-    processor.clearWetFftReady();
+    processorRef.clearDryFftReady();
+    processorRef.clearWetFftReady();
 
     repaint();
 }

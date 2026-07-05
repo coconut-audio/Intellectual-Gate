@@ -16,7 +16,7 @@ public:
     void timerCallback() override;
 
 private:
-    Processor& processor;
+    Processor& processorRef;
 
     static constexpr int interpolatedSize = 16000;
     dsp::FFT forwardFFT;

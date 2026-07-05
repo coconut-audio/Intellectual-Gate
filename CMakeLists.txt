@@ -10,6 +10,12 @@ message(STATUS "Plugin Name: ${PROJECT_NAME}")
 message(STATUS "Version: ${CURRENT_VERSION}")
 message(STATUS "Plugin Code: ${CURRENT_PLUGIN_CODE}")
 
+# platform specific settings (must be before subdirectories)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum macOS version" FORCE)
+    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
+endif()
+
 # set JUCE path
 add_subdirectory(modules/JUCE)
 
@@ -33,12 +39,6 @@ juce_add_plugin(${PROJECT_NAME}
     FORMATS "${FORMATS}"
     PRODUCT_NAME "${PROJECT_NAME}"
     PLUGIN_CODE "${CURRENT_PLUGIN_CODE}")
-
-# platform specific settings
-if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum macOS version" FORCE)
-    set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
-endif()
 
 # add source files
 target_sources(${PROJECT_NAME}

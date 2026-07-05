@@ -103,7 +103,7 @@ void SpectrumAnalyser::paint(Graphics& g)
         float x = frequencyToX(static_cast<float>(frequency));
         g.setColour(Theme::textDim);
         g.setFont(10.0f);
-        g.drawFittedText(String(frequency) + " Hz", Rectangle<int>(static_cast<int>(x) - 25, componentBounds.getBottom() - 20, 50, 20), Justification::centred, 1);
+        g.drawFittedText(String(frequency) + " Hz", Rectangle<int>(static_cast<int>(x) - 25, roundToInt(componentBounds.getBottom()) - 20, 50, 20), Justification::centred, 1);
     }
 
     g.restoreState();
@@ -163,11 +163,11 @@ void SpectrumAnalyser::updateSpectra(const float* dryFftData, const float* wetFf
     {
         float proportion = static_cast<float>(i) / static_cast<float>(scopeSize - 1);
         float frequency = minFrequency * pow(maxFrequency / minFrequency, proportion);
-        float frequencyRatio = frequency / (sampleRate / 2.0f);
+        float frequencyRatio = frequency / (static_cast<float>(sampleRate) / 2.0f);
         int fftDataIndex = jlimit<int>(0, static_cast<int>(dataSize / 2.0f - 1.0f), static_cast<int>(frequencyRatio * dataSize / 2.0f));
 
-        float dryLevel = Decibels::gainToDecibels(dryFftData[fftDataIndex]) - Decibels::gainToDecibels(dataSize) + Decibels::gainToDecibels(512.0f) + i * 0.05f;
-        float wetLevel = Decibels::gainToDecibels(wetFftData[fftDataIndex]) - Decibels::gainToDecibels(dataSize) + Decibels::gainToDecibels(512.0f) + i * 0.05f;
+        float dryLevel = Decibels::gainToDecibels(dryFftData[fftDataIndex]) - Decibels::gainToDecibels(dataSize) + Decibels::gainToDecibels(512.0f) + static_cast<float>(i) * 0.05f;
+        float wetLevel = Decibels::gainToDecibels(wetFftData[fftDataIndex]) - Decibels::gainToDecibels(dataSize) + Decibels::gainToDecibels(512.0f) + static_cast<float>(i) * 0.05f;
 
         dryScopeData[i] = 0.5f * jlimit(minDecibels, maxDecibels, dryLevel) + 0.5f * dryScopeData[i];
         wetScopeData[i] = 0.5f * jlimit(minDecibels, maxDecibels, wetLevel) + 0.5f * wetScopeData[i];

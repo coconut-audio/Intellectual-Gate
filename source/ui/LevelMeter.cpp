@@ -92,7 +92,7 @@ void LevelMeter::paint(Graphics& g)
         float y = jmap<float>(static_cast<float>(i), minDecibels, maxDecibels, componentBounds.getBottom(), componentBounds.getY());
         g.setColour(Theme::textDim);
         g.setFont(10.0f);
-        g.drawFittedText(String(i) + " dB", Rectangle<int>(componentBounds.getX(), static_cast<int>(y) - 10, 50, 20), Justification::right, 1);
+        g.drawFittedText(String(i) + " dB", Rectangle<int>(componentBounds.getX(), roundToInt(y) - 10, 50, 20), Justification::right, 1);
     }
 
     g.restoreState();
