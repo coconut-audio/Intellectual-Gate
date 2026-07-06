@@ -23,7 +23,7 @@ add_subdirectory(modules/JUCE)
 add_subdirectory(modules/googletest)
 
 # set plugin formats
-set(FORMATS VST3 Standalone)
+set(FORMATS VST3 AU LV2)
 
 # JUCE specific settings
 juce_add_plugin(${PROJECT_NAME}
