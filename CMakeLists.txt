@@ -23,7 +23,10 @@ add_subdirectory(modules/JUCE)
 add_subdirectory(modules/googletest)
 
 # set plugin formats
-set(FORMATS VST3 AU LV2)
+set(FORMATS VST3 LV2)
+if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    list(APPEND FORMATS AU)
+endif()
 
 # JUCE specific settings
 juce_add_plugin(${PROJECT_NAME}
@@ -38,7 +41,8 @@ juce_add_plugin(${PROJECT_NAME}
     PLUGIN_MANUFACTURER_CODE COAU
     FORMATS "${FORMATS}"
     PRODUCT_NAME "${PROJECT_NAME}"
-    PLUGIN_CODE "${CURRENT_PLUGIN_CODE}")
+    PLUGIN_CODE "${CURRENT_PLUGIN_CODE}"
+    LV2URI "https://coconutaudio.com/plugins/Intellectual.Gate")
 
 # add source files
 target_sources(${PROJECT_NAME}
