@@ -36,6 +36,9 @@ jobs:
       - name: Build
         run: cmake --build build 2>&1 | tee build.log
 
+      - name: Build tests
+        run: cmake --build build --target Tests 2>&1 | tee -a build.log
+
       - name: Check for warnings
         run: |
           if grep -E "source/.*warning:" build.log | grep -v "modules/" | grep -v "gtest/" | grep -v "BinaryData"; then
@@ -76,6 +79,9 @@ jobs:
 
       - name: Build
         run: cmake --build build --config Release 2>&1 | tee build.log
+
+      - name: Build tests
+        run: cmake --build build --config Release --target Tests 2>&1 | tee -a build.log
 
       - name: Check for warnings
         shell: bash
@@ -119,6 +125,9 @@ jobs:
 
       - name: Build
         run: cmake --build build 2>&1 | tee build.log
+
+      - name: Build tests
+        run: cmake --build build --target Tests 2>&1 | tee -a build.log
 
       - name: Check for warnings
         run: |
